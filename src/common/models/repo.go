@@ -15,11 +15,17 @@
 package models
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/astaxie/beego/validation"
 )
 
 //RepoTable is the table name for repository
-const RepoTable = "repository"
+const (
+	RepoTable  = "repository"
+	ImageTable = "image"
+)
 
 // RepoRecord holds the record of an repository in DB, all the infors are from the registry notification event.
 type RepoRecord struct {
@@ -33,9 +39,20 @@ type RepoRecord struct {
 	UpdateTime   time.Time `orm:"column(update_time);auto_now" json:"update_time"`
 }
 
+type Image struct {
+	ID             int64  `orm:"pk;auto;column(id)" json:"id"`
+	RepositoryName string `orm:"column(repository_name)" json:"repository_name" valid:"Required"`
+	Tag            string `orm:"column(tag)" json:"tag" valid:"Required"`
+	Status         string `orm:"column(status)" json:"status"`
+}
+
 //TableName is required by by beego orm to map RepoRecord to table repository
 func (rp *RepoRecord) TableName() string {
 	return RepoTable
+}
+
+func (i *Image) TableName() string {
+	return ImageTable
 }
 
 // RepositoryQuery : query parameters for repository
@@ -45,4 +62,16 @@ type RepositoryQuery struct {
 	ProjectName string
 	LabelID     int64
 	Pagination
+}
+
+func (i *Image) Valid() (err error) {
+	var message string
+	valid := validation.Validation{}
+	valid.Valid(i)
+	if valid.HasErrors() {
+		for k, v := range valid.ErrorsMap {
+			message += fmt.Sprintf("%s %s ", k, v.Error())
+		}
+	}
+	return
 }

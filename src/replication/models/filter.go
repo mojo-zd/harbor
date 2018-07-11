@@ -31,7 +31,8 @@ type Filter struct {
 func (f *Filter) Valid(v *validation.Validation) {
 	if !(f.Kind == replication.FilterItemKindProject ||
 		f.Kind == replication.FilterItemKindRepository ||
-		f.Kind == replication.FilterItemKindTag) {
+		f.Kind == replication.FilterItemKindTag ||
+		f.Kind == replication.FilterItemKindImageStatus) {
 		v.SetError("kind", fmt.Sprintf("invalid filter kind: %s", f.Kind))
 	}
 

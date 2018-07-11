@@ -81,6 +81,7 @@ type tagResp struct {
 	Signature    *notary.Target          `json:"signature"`
 	ScanOverview *models.ImgScanOverview `json:"scan_overview,omitempty"`
 	Labels       []*models.Label         `json:"labels"`
+	Status       string                  `json:"status"`
 }
 
 type manifestResp struct {
@@ -517,6 +518,16 @@ func assembleTags(client *registry.Repository, repository string,
 		result = append(result, item)
 	}
 
+	images, _ := dao.ListImages(map[string]interface{}{"repository_name": repository})
+	for _, r := range result {
+		r.Status = common.ImagePending
+		for _, i := range images {
+			if r.Name == i.Tag {
+				r.Status = i.Status
+				break
+			}
+		}
+	}
 	return result
 }
 

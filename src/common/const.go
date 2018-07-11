@@ -102,10 +102,17 @@ const (
 	ReadOnly                    = "read_only"
 	ClairURL                    = "clair_url"
 	NotaryURL                   = "notary_url"
-	DefaultAdminserverEndpoint  = "http://adminserver:8080"
+	DefaultAdminserverEndpoint  = "http://127.0.0.1:8080"
 	DefaultJobserviceEndpoint   = "http://jobservice:8080"
 	DefaultUIEndpoint           = "http://ui:8080"
 	DefaultNotaryEndpoint       = "http://notary-server:4443"
 	LdapGroupType               = 1
 	ReloadKey                   = "reload_key"
+)
+
+const (
+	ImagePending    = "pending"       // 待同步
+	ImageDeveloping = "developing"    // 开发中
+	ImageFinished   = "sync_finished" // 同步完成
+	ImageFailed     = "sync_failed"   // 同步失败
 )

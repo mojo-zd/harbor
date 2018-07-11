@@ -34,6 +34,8 @@ func init() {
 		new(ProjectMetadata),
 		new(ConfigEntry),
 		new(Label),
+		new(Image),
 		new(ResourceLabel),
 		new(UserGroup))
+
 }
