@@ -58,7 +58,12 @@ func (m *mysql) Register(alias ...string) error {
 	}
 	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.usr,
 		m.pwd, m.host, m.port, m.database)
-	return orm.RegisterDataBase(an, "mysql", conn)
+	if err := orm.RegisterDataBase(an, "mysql", conn); err != nil {
+		return err
+	}
+
+	orm.RunSyncdb("default", false, false)
+	return nil
 }
 
 // Name returns the name of MySQL
