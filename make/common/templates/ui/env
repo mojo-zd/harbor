@@ -5,4 +5,5 @@ JOBSERVICE_SECRET=$jobservice_secret
 GODEBUG=netdns=cgo
 ADMINSERVER_URL=$adminserver_url
 UAA_CA_ROOT=/etc/ui/certificates/uaa_ca.pem
+ENVIRONMENT_MODEL=$environment
 _REDIS_URL=$redis_url

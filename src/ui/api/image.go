@@ -3,10 +3,11 @@ package api
 import (
 	"strings"
 
-	"github.com/vmware/harbor/src/common"
 	"github.com/vmware/harbor/src/common/dao"
 	"github.com/vmware/harbor/src/common/dao/project"
 	"github.com/vmware/harbor/src/common/models"
+	"github.com/vmware/harbor/src/ui/config"
+	"github.com/vmware/harbor/src/ui/utils"
 )
 
 // ImageAPI handlers request for images management
@@ -14,19 +15,16 @@ type ImageAPI struct {
 	BaseController
 }
 
-// fetch current user
-func (*ImageAPI) Prepare() {
-
-}
-
 func (ia *ImageAPI) validate(image *models.Image) {
-	if image.Status != common.ImagePending &&
-		image.Status != common.ImageDeveloping &&
-		image.Status != common.ImageFinished &&
-		image.Status != common.ImageFailed {
-		ia.HandleBadRequest("invalid image status")
+	if !config.IsDevModel() {
+		ia.HandleBadRequest("current environment is not dev model")
 		return
 	}
+
+	if !utils.ImageStatusValid(image.Status) {
+		ia.HandleBadRequest("invalid image status")
+	}
+
 	if err := image.Valid(); err != nil {
 		ia.HandleBadRequest(err.Error())
 		return

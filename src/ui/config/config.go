@@ -407,6 +407,11 @@ func UISecret() string {
 	return os.Getenv("UI_SECRET")
 }
 
+// EnvModel return environment model
+func IsDevModel() bool {
+	return os.Getenv("ENVIRONMENT_MODEL") == "dev"
+}
+
 // JobserviceSecret returns a secret to mark Jobservice when communicate with
 // other component
 // TODO replace it with method of SecretStore

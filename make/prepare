@@ -194,6 +194,7 @@ validate(rcp, args)
 reload_config = rcp.get("configuration", "reload_config") if rcp.has_option(
     "configuration", "reload_config") else "false"
 hostname = rcp.get("configuration", "hostname")
+environment = rcp.get("configuration", "environment")
 protocol = rcp.get("configuration", "ui_url_protocol")
 public_url = protocol + "://" + hostname
 email_identity = rcp.get("configuration", "email_identity")
@@ -392,6 +393,7 @@ render(os.path.join(templates_dir, "ui", "env"),
         ui_secret=ui_secret,
         jobservice_secret=jobservice_secret,
         redis_url = redis_url,
+        environment = environment,
         adminserver_url = adminserver_url
         )
 

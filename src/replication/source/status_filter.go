@@ -9,6 +9,7 @@ import (
 	"github.com/vmware/harbor/src/replication"
 	"github.com/vmware/harbor/src/replication/models"
 	"github.com/vmware/harbor/src/replication/registry"
+	"github.com/vmware/harbor/src/ui/utils"
 )
 
 // RepositoryFilter implement Filter interface to filter repository
@@ -43,10 +44,11 @@ func (s *StatusFilter) DoFilter(items []models.FilterItem) []models.FilterItem {
 	}
 	log.Debugf("tag filter candidates: %v", candidates)
 	result := []models.FilterItem{}
-	if s.pattern != common.ImagePending && s.pattern != common.ImageDeveloping && s.pattern != common.ImageFinished && s.pattern != common.ImageFailed {
+	if !utils.ImageStatusValid(s.pattern) {
 		log.Warning("pattern not match image status")
 		return result
 	}
+
 	images, _ := dao.ListImages(map[string]interface{}{})
 	for _, item := range items {
 		if item.Kind != replication.FilterItemKindImageStatus {

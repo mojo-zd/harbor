@@ -22,6 +22,8 @@ import (
 	"github.com/vmware/harbor/src/ui/service/token"
 
 	"net/http"
+
+	"github.com/vmware/harbor/src/common"
 )
 
 // NewRepositoryClientForUI creates a repository client that can only be used to
@@ -38,4 +40,17 @@ func NewRepositoryClientForUI(username, repository string) (*registry.Repository
 		Transport: transport,
 	}
 	return registry.NewRepository(repository, endpoint, client)
+}
+
+// ImageStatusValid valid image's status
+func ImageStatusValid(status string) bool {
+	if status == common.ImagePending ||
+		status == common.ImageDeveloping ||
+		status == common.ImageFinished ||
+		status == common.ImageRetry ||
+		status == common.ImageFailed {
+		return true
+	}
+
+	return false
 }
