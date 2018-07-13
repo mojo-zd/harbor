@@ -72,7 +72,6 @@ func updateInitPassword(userID int, password string) error {
 }
 
 func main() {
-	os.Setenv("UI_SECRET","oT1SIipQRmdZ844z")
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	//TODO
 	redisURL := os.Getenv("_REDIS_URL")
@@ -154,5 +153,5 @@ func main() {
 	log.Info("Init proxy")
 	proxy.Init()
 	//go proxy.StartProxy()
-	beego.Run(":8899")
+	beego.Run()
 }

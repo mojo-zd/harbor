@@ -23,6 +23,7 @@ import (
 	job_models "github.com/vmware/harbor/src/common/job/models"
 	common_models "github.com/vmware/harbor/src/common/models"
 	"github.com/vmware/harbor/src/common/utils/log"
+	replication2 "github.com/vmware/harbor/src/replication"
 	"github.com/vmware/harbor/src/replication/models"
 	"github.com/vmware/harbor/src/ui/config"
 )
@@ -55,23 +56,30 @@ func NewDefaultReplicator(client common_job.Client) *DefaultReplicator {
 // Replicate ...
 func (d *DefaultReplicator) Replicate(replication *Replication) error {
 	repositories := map[string][]string{}
+	extensions := map[string]bool{}
 	// TODO the operation of all candidates are same for now. Update it after supporting
 	// replicate deletion
 	operation := ""
 	for _, candidate := range replication.Candidates {
 		strs := strings.SplitN(candidate.Value, ":", 2)
 		repositories[strs[0]] = append(repositories[strs[0]], strs[1])
+
+		if _, ok := extensions[strs[0]]; !ok && candidate.Kind == replication2.FilterItemKindImageStatus {
+			extensions[strs[0]] = true
+		}
 		operation = candidate.Operation
 	}
 
 	for _, target := range replication.Targets {
 		for repository, tags := range repositories {
 			// create job in database
+			_, isExtension := extensions[repository]
 			id, err := dao.AddRepJob(common_models.RepJob{
-				PolicyID:   replication.PolicyID,
-				Repository: repository,
-				TagList:    tags,
-				Operation:  operation,
+				PolicyID:    replication.PolicyID,
+				Repository:  repository,
+				IsExtension: isExtension,
+				TagList:     tags,
+				Operation:   operation,
 			})
 			if err != nil {
 				return err

@@ -210,7 +210,6 @@ func (ctl *DefaultController) Replicate(policyID int64, metadata ...map[string]i
 	if len(candidates) == 0 {
 		log.Debugf("replicaton candidates are null, no further action needed")
 	}
-
 	targets := []*common_models.RepTarget{}
 	for _, targetID := range policy.TargetIDs {
 		target, err := ctl.targetManager.GetTarget(targetID)
@@ -265,11 +264,15 @@ func buildFilterChain(policy *models.ReplicationPolicy, sourcer *source.Sourcer)
 	}
 
 	registry := sourcer.GetAdaptor(replication.AdaptorKindHarbor)
-	// only support repository and tag filter for now
+	// only support repository 、 tag's status and tag filter for now
 	filters = append(filters,
 		source.NewRepositoryFilter(patterns[replication.FilterItemKindRepository], registry))
 	filters = append(filters,
 		source.NewTagFilter(patterns[replication.FilterItemKindTag], registry))
+	if len(policy.Filters) > 0 && policy.Filters[0].Kind == replication.FilterItemKindImageStatus {
+		filters = append(filters,
+			source.NewStatusFilter(patterns[replication.FilterItemKindImageStatus], registry))
+	}
 
 	return source.NewDefaultFilterChain(filters)
 }

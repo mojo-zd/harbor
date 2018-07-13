@@ -113,6 +113,7 @@ const (
 const (
 	ImagePending    = "pending"       // 待同步
 	ImageDeveloping = "developing"    // 开发中
+	ImageRetry      = "sync_retry"    // 重新同步
 	ImageFinished   = "sync_finished" // 同步完成
 	ImageFailed     = "sync_failed"   // 同步失败
 )

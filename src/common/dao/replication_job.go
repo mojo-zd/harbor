@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/vmware/harbor/src/common"
 	"github.com/vmware/harbor/src/common/models"
 	"github.com/vmware/harbor/src/common/utils/log"
 )
@@ -373,6 +374,27 @@ func UpdateRepJobStatus(id int64, status string) error {
 	n, err := o.Update(&j, "Status", "UpdateTime")
 	if n == 0 {
 		log.Warningf("no records are updated when updating replication job %d", id)
+	}
+
+	o.Read(&j, "id")
+	// this job is custom, should update image status
+	if j.IsExtension {
+		tags := strings.Split(j.Tags, ",")
+		var imgStatus string
+		for _, tag := range tags {
+			switch status {
+			case models.JobError:
+				imgStatus = common.ImageFailed
+			case models.JobFinished:
+				imgStatus = common.ImageFinished
+			case models.JobRetrying:
+				imgStatus = common.ImageRetry
+			}
+
+			if len(imgStatus) > 0 {
+				UpdateImage(&models.Image{RepositoryName: j.Repository, Tag: tag, Status: imgStatus})
+			}
+		}
 	}
 	return err
 }
