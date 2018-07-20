@@ -102,7 +102,7 @@ const (
 	ReadOnly                    = "read_only"
 	ClairURL                    = "clair_url"
 	NotaryURL                   = "notary_url"
-	DefaultAdminserverEndpoint  = "http://127.0.0.1:8080"
+	DefaultAdminserverEndpoint  = "http://adminserver:8080"
 	DefaultJobserviceEndpoint   = "http://jobservice:8080"
 	DefaultUIEndpoint           = "http://ui:8080"
 	DefaultNotaryEndpoint       = "http://notary-server:4443"
